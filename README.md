@@ -2,4 +2,4 @@
 
 Python Event-Driven Architecture without the Administration.
 
-![alt text](docs/img/logo.png)
+![alt text](docs/img/icon.png)
