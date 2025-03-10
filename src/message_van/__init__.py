@@ -1,3 +1,4 @@
+from .domain.models import Command, Event
 from .domain.models import MessageVan
 from .domain.models.message_van import init_handlers
 from .service_layer import load_handlers
@@ -8,5 +9,7 @@ init_handlers(message_handlers)
 
 
 __all__ = [
+    "Command",
+    "Event",
     "MessageVan",
 ]

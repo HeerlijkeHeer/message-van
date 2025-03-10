@@ -11,4 +11,4 @@ else:
     message_van_type = "MessageVan"
 
 
-EventHandler = Callable[[Event, "MessageVan"], Awaitable[None]]
+EventHandler = Callable[[Event, message_van_type], Awaitable[None]]
