@@ -1,0 +1,31 @@
+name: Build and Publish
+
+on:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  build-and-publish:
+    runs-on: ubuntu-latest
+    container:
+      image: jfxs/rye
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Configure Git (optional, but recommended)
+        run: |
+          git config --global --add safe.directory /__w/${{ github.event.repository.name }}/${{ github.event.repository.name }}
+
+      - name: Install dependencies
+        run: rye sync
+
+      - name: Build Package
+        run: rye build
+
+      - name: Publish to PyPI
+        env:
+          RYE_PYPI_TOKEN: ${{ secrets.PYPI_API_TOKEN }}
+        run: |
+          rye publish --token $RYE_PYPI_TOKEN     

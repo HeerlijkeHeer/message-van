@@ -1,6 +1,6 @@
 from typing import TYPE_CHECKING, Awaitable, Callable
 
-from message_van.domain.models.base import Event
+from . import Event
 
 
 if TYPE_CHECKING:

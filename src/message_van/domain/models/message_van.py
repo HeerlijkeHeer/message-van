@@ -2,22 +2,18 @@ from asyncio import create_task, gather
 from types import TracebackType
 from typing import Any
 
+from message_van.domain.models import CommandHandler, EventHandler
 from message_van.domain.models.base import Command, Event, Message
 
-from . import CommandHandlers, EventHandlers, UnitOfWork
+from . import UnitOfWork, MessageHandlers
 
 
 class MessageVan:
     uow: UnitOfWork
 
-    def __init__(
-        self,
-        command_handlers: CommandHandlers,
-        event_handlers: EventHandlers,
-        unit_of_work: UnitOfWork,
-    ):
-        self.command_handlers = command_handlers
-        self.event_handlers = event_handlers
+    _message_handlers: MessageHandlers
+
+    def __init__(self, unit_of_work: UnitOfWork):
         self.unit_of_work = unit_of_work
 
     async def __aenter__(self) -> "MessageVan":
@@ -40,20 +36,24 @@ class MessageVan:
         await self.publish_event(message)
 
     async def publish_command(self, command: Command) -> Any:
-        handler = self.command_handlers.get(command)
+        handler = self._get_handler_for_command(command)
 
         return await handler(command, self)
 
     async def publish_event(self, event: Event) -> None:
         tasks = [
             create_task(handler(event, self))
-            for handler in self.event_handlers.get(event)
+            for handler in self._get_handlers_for_event(event)
         ]
 
         await gather(*tasks)
 
-    def _get_handlers(self, message_type: type[Message]):
-        if issubclass(message_type, Event):
-            return self.event_handlers
-        else:
-            return self.command_handlers
+    def _get_handler_for_command(self, command: Command) -> CommandHandler:
+        return self._message_handlers.get_handler_for_command(command)
+
+    def _get_handlers_for_event(self, event: Event) -> list[EventHandler]:
+        return self._message_handlers.get_handlers_for_event(event)
+
+
+def init_handlers(message_handlers: MessageHandlers) -> None:
+    MessageVan._message_handlers = message_handlers

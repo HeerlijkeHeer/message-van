@@ -1,5 +1,5 @@
-from pydantic import BaseModel
+from . import Message
 
 
-class Command(BaseModel):
+class Command(Message):
     """Base Command class."""

@@ -1,4 +1,5 @@
-from message_van.domain.models import Command, Event
+from pydantic import BaseModel
 
 
-Message = Command | Event
+class Message(BaseModel):
+    """Base Message class."""

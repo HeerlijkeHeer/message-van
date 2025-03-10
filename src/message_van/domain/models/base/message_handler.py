@@ -1,6 +1,6 @@
 from typing import TYPE_CHECKING, Any, Awaitable, Callable
 
-from message_van.domain.models.base import Command
+from . import Message
 
 
 if TYPE_CHECKING:
@@ -11,4 +11,4 @@ else:
     message_van_type = "MessageVan"
 
 
-CommandHandler = Callable[[Command, message_van_type], Awaitable[Any | None]]
+MessageHandler = Callable[[Message, message_van_type], Awaitable[Any | None]]

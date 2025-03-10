@@ -1,5 +1,5 @@
-from pydantic import BaseModel
+from . import Message
 
 
-class Event(BaseModel):
+class Event(Message):
     """Base Event class."""
