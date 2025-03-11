@@ -23,7 +23,8 @@ class SignatureAdapter:
         modules = self.import_modules(module_paths)
 
         for func in list_modules(modules):
-            yield get_signature(func)
+            if signature := get_signature(func):
+                yield signature
 
     def get_module_paths(self) -> List[Path]:
         return [module_path for module_path in self.list_module_paths()]
@@ -50,7 +51,7 @@ class SignatureAdapter:
         )[:-3]
         spec = importlib.util.spec_from_file_location(module_name, file_path)
         module = importlib.util.module_from_spec(spec)
-        # spec.loader.exec_module(module)
+        spec.loader.exec_module(module)
 
         return module
 
@@ -83,13 +84,12 @@ def _is_public_function(func: Callable) -> bool:
 
 
 def get_signature(func) -> MessageHandlerSignature:
-    param = get_message_param(func)
-
-    return MessageHandlerSignature(
-        message_class_name=get_class_name(param),
-        message_handler=func,
-        type=get_handler_type(param),
-    )
+    if param := get_message_param(func):
+        return MessageHandlerSignature(
+            message_class_name=get_class_name(param),
+            message_handler=func,
+            type=get_handler_type(param),
+        )
 
 
 def get_message_param(func):
