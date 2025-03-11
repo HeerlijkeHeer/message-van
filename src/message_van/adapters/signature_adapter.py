@@ -50,7 +50,7 @@ class SignatureAdapter:
         )[:-3]
         spec = importlib.util.spec_from_file_location(module_name, file_path)
         module = importlib.util.module_from_spec(spec)
-        spec.loader.exec_module(module)
+        # spec.loader.exec_module(module)
 
         return module
 
