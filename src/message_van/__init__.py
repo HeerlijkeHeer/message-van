@@ -1,6 +1,6 @@
 from .bootstrap import cli_group
 from .domain.models import Command, Event
-from .domain.models import MessageVan
+from .domain.models import MessageVan, UnitOfWork
 from .domain.models.message_van import init_handlers
 from .service_layer import load_handlers
 
@@ -13,5 +13,6 @@ __all__ = [
     "Command",
     "Event",
     "MessageVan",
+    "UnitOfWork",
     "cli_group",
 ]
