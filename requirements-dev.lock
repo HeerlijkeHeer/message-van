@@ -85,3 +85,5 @@ wcwidth==0.2.13
     # via prompt-toolkit
 wmctrl==0.5
     # via pdbpp
+wrapt==1.17.2
+    # via message-van

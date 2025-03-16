@@ -1,4 +1,4 @@
-from .bootstrap import cli_group
+from .domain import entrypoint
 from .domain.models import Command, Event
 from .domain.models import MessageVan, UnitOfWork
 from .domain.models.message_van import init_handlers
@@ -14,5 +14,5 @@ __all__ = [
     "Event",
     "MessageVan",
     "UnitOfWork",
-    "cli_group",
+    "entrypoint",
 ]
