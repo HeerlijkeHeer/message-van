@@ -8,8 +8,8 @@ authors = [
 dependencies = [
     "pydantic>=2.0.0",
     "tomli>=2.0.0",
-    "asyncclick==8.1.8",
-    "wrapt==1.17.2",
+    "asyncclick>=8.0.0",
+    "wrapt>=1.17.0",
 ]
 readme = "README.md"
 requires-python = ">= 3.10"
