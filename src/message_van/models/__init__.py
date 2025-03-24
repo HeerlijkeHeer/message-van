@@ -14,6 +14,8 @@ from .handler_signature import MessageHandlerSignature
 from .message_handlers import MessageHandlers
 from .unit_of_work import UnitOfWork
 
+from .message_van_meta import MessageVanMeta
+
 from .message_van import MessageVan
 
 
@@ -28,5 +30,6 @@ __all__ = [
     "MessageHandlerSignature",
     "MessageHandlerType",
     "MessageVan",
+    "MessageVanMeta",
     "UnitOfWork",
 ]

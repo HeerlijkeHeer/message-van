@@ -4,7 +4,7 @@ from . import Event
 
 
 if TYPE_CHECKING:
-    from message_van.domain.models import MessageVan
+    from message_van.models import MessageVan
 
     message_van_type = MessageVan
 else:

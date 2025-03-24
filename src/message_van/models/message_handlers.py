@@ -1,7 +1,7 @@
 from collections import defaultdict
 
-from message_van.domain.exceptions import UnknownHandlerError
-from message_van.domain.models import (
+from message_van.exceptions import UnknownHandlerError
+from message_van.models import (
     Command,
     CommandHandler,
     Event,
@@ -61,6 +61,15 @@ class MessageHandlers:
 
     def _register_event(self, class_name: str, handler: EventHandler) -> None:
         self._event_handlers[class_name].append(handler)
+
+    @property
+    def __bool__(self) -> None:
+        if self._command_handlers:
+            return True
+        if len(self._event_handlers) > 0:
+            return True
+
+        return False
 
 
 def _get_message_name(message: Message) -> str:

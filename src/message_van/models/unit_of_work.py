@@ -1,9 +1,7 @@
-from abc import ABC, abstractmethod
 from types import TracebackType
 
 
-class UnitOfWork(ABC):
-    @abstractmethod
+class UnitOfWork:
     async def __aenter__(self) -> "UnitOfWork":
         """Enter the Unit of Work, and return its value."""
 

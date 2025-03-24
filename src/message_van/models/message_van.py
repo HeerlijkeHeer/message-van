@@ -2,13 +2,13 @@ from asyncio import create_task, gather
 from types import TracebackType
 from typing import Any
 
-from message_van.domain.models import CommandHandler, EventHandler
-from message_van.domain.models.base import Command, Event, Message
+from message_van.models import CommandHandler, EventHandler
+from message_van.models.base import Command, Event, Message
 
-from . import UnitOfWork, MessageHandlers
+from . import MessageHandlers, MessageVanMeta, UnitOfWork
 
 
-class MessageVan:
+class MessageVan(metaclass=MessageVanMeta):
     uow: UnitOfWork
 
     _message_handlers: MessageHandlers
@@ -18,6 +18,8 @@ class MessageVan:
 
     async def __aenter__(self) -> "MessageVan":
         self.uow = await self.unit_of_work.__aenter__()
+
+        await type(self).register_handlers()
 
         return self
 
@@ -53,7 +55,3 @@ class MessageVan:
 
     def _get_handlers_for_event(self, event: Event) -> list[EventHandler]:
         return self._message_handlers.get_handlers_for_event(event)
-
-
-def init_handlers(message_handlers: MessageHandlers) -> None:
-    MessageVan._message_handlers = message_handlers
