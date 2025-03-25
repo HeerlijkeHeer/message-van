@@ -1,6 +1,6 @@
 [project]
 name = "message-van"
-version = "2.0.0"
+version = "2.0.4"
 description = "Python Event-Driven Architecture without the Administration."
 authors = [
     { name = "Thomas Vanhelden", email = "thomas.vanhelden@gmail.com" }

@@ -6,6 +6,9 @@ from pathlib import Path
 from types import ModuleType
 
 
+_import_cache = {}
+
+
 def list_modules(root_package_path: Path) -> Generator[ModuleType]:
     for module_path in list_module_paths(root_package_path):
         yield import_module(root_package_path, module_path)
@@ -41,7 +44,18 @@ def import_module(root_package_path: Path, module_path: Path) -> ModuleType:
 def _import_module(root_package_path: Path, module_path: Path) -> ModuleType:
     module_name = get_module_name(module_path, root_package_path)
 
-    return importlib.import_module(module_name)
+    return safe_import_module(module_name)
+
+
+def safe_import_module(module_name: str) -> ModuleType:
+    if module_name not in _import_cache:
+        if module_name in sys.modules:
+            module = sys.modules[module_name]
+        else:
+            module = importlib.import_module(module_name)
+        _import_cache[module_name] = module
+
+    return _import_cache[module_name]
 
 
 def _root_package_in_path(root_package_path: Path) -> bool:

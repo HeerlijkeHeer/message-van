@@ -4,7 +4,7 @@ from pathlib import Path
 
 from message_van.models import MessageHandlers
 from message_van.signatures import list_signatures
-from message_van.util import get_src_dir
+from message_van.util import get_package_dir
 
 
 class MessageVanMeta(ABCMeta):
@@ -23,9 +23,9 @@ class MessageVanMeta(ABCMeta):
 
     async def _register_handlers(cls) -> None:
         cls_file = Path(getfile(cls))
-        src_dir = get_src_dir(cls_file)
+        package_dir = get_package_dir(cls_file)
 
         cls._message_handlers = MessageHandlers()
 
-        for signature in list_signatures(src_dir):
+        for signature in list_signatures(package_dir):
             cls._message_handlers.register(signature)
