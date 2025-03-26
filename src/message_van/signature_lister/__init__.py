@@ -1,3 +1,5 @@
+from .module_importer import import_module
+
 from .function_lister import list_public_functions
 from .module_lister import list_modules
 from .signature_getter import get_signature
@@ -10,4 +12,5 @@ __all__ = [
     "list_modules",
     "list_public_functions",
     "list_signatures",
+    "module_importer",
 ]

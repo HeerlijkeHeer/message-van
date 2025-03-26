@@ -5,8 +5,8 @@ from pathlib import Path
 from types import ModuleType
 from typing import Callable
 
-from message_van.signatures.function_lister import list_public_functions
-from message_van.signatures.module_lister import list_modules
+from message_van.signature_lister.function_lister import list_public_functions
+from message_van.signature_lister.module_lister import list_modules
 from message_van.models import (
     Command,
     Event,
