@@ -34,13 +34,24 @@ class MessageHandlers:
     def get_handlers_for_event(self, event: Event) -> list[EventHandler]:
         event_name = _get_message_name(event)
 
-        return self._get_handlers_for_event(event_name)
+        name_handlers = self._get_handlers_by_name(event_name)
+        base_handlers = self._get_handlers_by_base_classes(event)
 
-    def _get_handlers_for_event(self, event_name: str) -> list[EventHandler]:
-        try:
-            return self._event_handlers[event_name]
-        except KeyError:
-            raise UnknownHandlerError(event_name)
+        return name_handlers + base_handlers
+
+    def _get_handlers_by_name(self, event_name: str) -> list[EventHandler]:
+        return self._event_handlers[event_name]
+
+    def _get_handlers_by_base_classes(
+        self, event: Event
+    ) -> list[EventHandler]:
+        handlers = []
+        base_class_names = get_base_class_names(event)
+
+        for base_class_name in base_class_names:
+            handlers.extend(self._event_handlers[base_class_name])
+
+        return handlers
 
     def register(self, signature: MessageHandlerSignature) -> None:
         type_ = signature.type
@@ -76,3 +87,17 @@ def _get_message_name(message: Message) -> str:
     message_class = message.__class__
 
     return message_class.__name__
+
+
+def get_base_class_names(message: Message) -> set[str]:
+    bases = set()
+
+    def _get_bases(c):
+        for base in c.__bases__:
+            if base not in bases:
+                bases.add(base.__name__)
+                _get_bases(base)
+
+    _get_bases(message.__class__)
+
+    return bases
