@@ -35,7 +35,7 @@ class MessageVan(metaclass=MessageVanMeta):
         if isinstance(message, Command):
             return await self.publish_command(message)
 
-        await self.publish_event(message)
+        return await self.publish_event(message)
 
     async def publish_command(self, command: Command) -> Any:
         handler = self._get_handler_for_command(command)
@@ -55,4 +55,3 @@ class MessageVan(metaclass=MessageVanMeta):
 
     def _get_handlers_for_event(self, event: Event) -> list[EventHandler]:
         return self._message_handlers.get_handlers_for_event(event)
-

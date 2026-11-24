@@ -14,22 +14,33 @@ from message_van.models import (
 
 class MessageHandlers:
     _command_handlers: dict[str, CommandHandler]
-    _event_handlers: dict[str, list[EventHandler]]
+    _event_handlers: dict[str, set[EventHandler]]
 
     def __init__(self):
         self._command_handlers = {}
-        self._event_handlers = defaultdict(list)
+        self._event_handlers = defaultdict(set)
 
     def get_handler_for_command(self, command: Command) -> CommandHandler:
-        command_name = _get_message_name(command)
-
-        return self._get_handler_for_command(command_name)
-
-    def _get_handler_for_command(self, command_name: str) -> CommandHandler:
         try:
-            return self._command_handlers[command_name]
+            return self.get_handler_by_name(command)
+        except UnknownHandlerError:
+            return self.get_base_handler(command)
+
+    def get_handler_by_name(self, command: Command) -> CommandHandler:
+        name = _get_message_name(command)
+        try:
+            return self._command_handlers[name]
         except KeyError:
-            raise UnknownHandlerError(command_name)
+            raise UnknownHandlerError(name)
+
+    def get_base_handler(self, command: Command) -> CommandHandler:
+        base_class_names = get_base_class_names(command)
+
+        for base_class_name in base_class_names:
+            if handler := self._command_handlers.get(base_class_name):
+                return handler
+
+        raise UnknownHandlerError(_get_message_name(command))
 
     def get_handlers_for_event(self, event: Event) -> list[EventHandler]:
         event_name = _get_message_name(event)
@@ -37,19 +48,19 @@ class MessageHandlers:
         name_handlers = self._get_handlers_by_name(event_name)
         base_handlers = self._get_handlers_by_base_classes(event)
 
-        return name_handlers + base_handlers
+        return name_handlers | base_handlers
 
-    def _get_handlers_by_name(self, event_name: str) -> list[EventHandler]:
+    def _get_handlers_by_name(self, event_name: str) -> set[EventHandler]:
         return self._event_handlers[event_name]
 
     def _get_handlers_by_base_classes(
         self, event: Event
-    ) -> list[EventHandler]:
-        handlers = []
+    ) -> set[EventHandler]:
+        handlers = set()
         base_class_names = get_base_class_names(event)
 
         for base_class_name in base_class_names:
-            handlers.extend(self._event_handlers[base_class_name])
+            handlers.update(self._event_handlers[base_class_name])
 
         return handlers
 
@@ -71,7 +82,7 @@ class MessageHandlers:
         self._command_handlers[class_name] = handler
 
     def _register_event(self, class_name: str, handler: EventHandler) -> None:
-        self._event_handlers[class_name].append(handler)
+        self._event_handlers[class_name].add(handler)
 
     @property
     def __bool__(self) -> None:
